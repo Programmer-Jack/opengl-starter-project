@@ -117,20 +117,15 @@ int main()
     // set up vertex data and buffer(s) and configure vertex attributes
     float vertices[] =
     {
-         0.0f,  0.0f, 0.0f, // center
-         0.5f,  0.0f, 0.0f,
-         0.309f / 2,  0.951f / 2, 0.0f,
-        -0.809f / 2, 0.588f / 2, 0.0f,
-        -0.809f / 2, -0.588f / 2, 0.0f,
-         0.309f / 2, -0.951f / 2, 0.0f
+         0.5f,  0.5f, 0.0f, // top right
+         0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f, // top left
     };
     unsigned int indices[] =
     {
-        0, 1, 2, // first triangle
-        0, 2, 3,
-        0, 3, 4,
-        0, 4, 5,
-        0, 5, 1
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
     };
 
     unsigned int VBO, VAO, EBO;
@@ -175,7 +170,7 @@ int main()
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
         // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 15, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); // unbind
 
         // See double buffer (front and back)
