@@ -1,7 +1,7 @@
 #ifndef SHADER_CLASS_H
 #define SHADER_CLASS_H
 
-#include "glad.h"
+#include "glad/glad.h"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -18,6 +18,8 @@ class Shader
 
         void Activate();
         void Delete();
+    private:
+        void compileErrors(unsigned int shader, const char* type);
 };
 
 #endif

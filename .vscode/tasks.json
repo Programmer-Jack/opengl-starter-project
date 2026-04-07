@@ -7,17 +7,16 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-I${workspaceFolder}/headers",
-                "-I${workspaceFolder}/glad",
+                "-I${workspaceFolder}/lib",
                 "-g",
                 "${workspaceFolder}/src/*.cpp",
-                "${workspaceFolder}/glad/*.c",
+                "${workspaceFolder}/lib/glad/*.c",
                 "-o",
                 "${workspaceFolder}/builds/app",
                 "-lGL",
                 "-lglfw"
             ],
             "options": {
-                
             },
             "problemMatcher": [
                 "$gcc"
