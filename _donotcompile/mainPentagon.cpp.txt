@@ -169,8 +169,6 @@ int main()
         // rendering commands
         glClearColor(0.02f, 0.1f, 0.1f, 1.0f);   // set state
         glClear(GL_COLOR_BUFFER_BIT);           // use state
-
-        // ..:: Drawing code (in render loop) :: ..
         // 4. draw the object
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
@@ -188,6 +186,7 @@ int main()
     glDeleteProgram(shaderProgram);
 
     // glfw: terminate, clearning all previously allocated GLFW resources.
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
