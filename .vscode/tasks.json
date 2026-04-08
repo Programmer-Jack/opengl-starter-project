@@ -6,16 +6,17 @@
             "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
+                "-I${workspaceFolder}/headers",
+                "-I${workspaceFolder}/lib",
                 "-g",
-                "${workspaceFolder}/*.cpp",
-                "${workspaceFolder}/glad/*.c",
+                "${workspaceFolder}/src/*.cpp",
+                "${workspaceFolder}/lib/glad/*.c",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}",
+                "${workspaceFolder}/builds/app",
                 "-lGL",
                 "-lglfw"
             ],
             "options": {
-                "cwd": "${fileDirname}"
             },
             "problemMatcher": [
                 "$gcc"

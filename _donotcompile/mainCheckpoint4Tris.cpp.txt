@@ -1,0 +1,144 @@
+#include "glad.h"
+#include <GLFW/glfw3.h>
+
+#include <cmath>
+#include <iostream>
+
+#include "shaderClass.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
+
+#define TAN_PI_6 (float(std::sqrt(3)) / 3)
+
+// set up vertex data and buffer(s) and configure vertex attributes
+GLfloat vertices[] =
+{
+    -0.5f,      -0.5f * TAN_PI_6, 0.0f, // ll corner
+     0.5f,      -0.5f * TAN_PI_6, 0.0f, // lr corner
+     0.0f,       0.5f * TAN_PI_6 * 2, 0.0f, // upper corner
+    -0.5f / 2,   0.5f * TAN_PI_6 / 2, 0.0f, // inner l
+     0.5f / 2,   0.5f * TAN_PI_6 / 2, 0.0f, // inner r
+     0.0f,      -0.5F * TAN_PI_6, 0.0f  // inner d
+};
+GLuint indices[] =
+{
+    0, 3, 5, // ll corner, inner l, inner down
+    3, 2, 4,
+    5, 4, 1
+};
+
+// Declare functions to implement later on
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow* window);
+
+// settings
+const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_HEIGHT = 600;
+
+
+int main()
+{
+    // "GLFW is an Open Source, multi-platform library for OpenGL, 
+    // OpenGL ES and Vulkan development on the desktop. It provides 
+    // a simple API for creating windows, contexts and surfaces, 
+    // receiving input and events." -- www.glfw.org
+
+    // Initialize GLFW, set OpenGL version 4.6, use core profile
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    // Create a window object of 800x600 pixels with title LearnOpenGL
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "LearnOpenGL", NULL, NULL);
+    if (window == NULL)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+    // Register framebuffer resize callback function
+    // Always register callback functions after creating the
+    // window and before render loop initiation
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // GLAD manages function pointers for OpenGL
+    // glad: load all OpenGL function pointers
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
+
+    // Tell OpenGL the size of the rendering window
+    // First two params: location of lower-left corner of window
+    glViewport(0, 0, 800, 600);
+
+    Shader shaderProgram("default.vert", "default.frag");
+
+    VAO VAO1;
+    VAO1.Bind();
+
+    VBO VBO1(vertices, sizeof(vertices));
+    EBO EBO1(indices, sizeof(indices));
+
+    VAO1.LinkVBO(VBO1, 0);
+    VAO1.Unbind();
+    VBO1.Unbind();
+    EBO1.Unbind();
+
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    // Render loop
+    while (!glfwWindowShouldClose(window))
+    {
+        // input
+        processInput(window);
+
+        // rendering commands
+        glClearColor(0.02f, 0.1f, 0.1f, 1.0f);   // set state
+        glClear(GL_COLOR_BUFFER_BIT);           // use state
+        // 4. draw the object
+        shaderProgram.Activate();
+        VAO1.Bind();
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0); // unbind
+
+        // See double buffer (front and back)
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    // optional: deallocate all resources once they have outlived their purpose
+    VAO1.Delete();
+    VBO1.Delete();
+    EBO1.Delete();
+    shaderProgram.Delete();
+
+    // glfw: terminate, clearning all previously allocated GLFW resources.
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return 0;
+}
+
+// Resize viewport
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+// Close on escape
+void processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, true);
+    }
+}
