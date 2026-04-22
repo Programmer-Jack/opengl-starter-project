@@ -10,6 +10,7 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "texture.h"
+#include "timeUtils.h"
 
 #define TAN_PI_6 (float(std::sqrt(3)) / 3)
 
@@ -38,6 +39,8 @@ const unsigned int SCREEN_HEIGHT = 600;
 
 int main()
 {
+    ClockUtil myClock;
+
     // "GLFW is an Open Source, multi-platform library for OpenGL, 
     // OpenGL ES and Vulkan development on the desktop. It provides 
     // a simple API for creating windows, contexts and surfaces, 
@@ -95,7 +98,11 @@ int main()
     EBO1.Unbind();
 
     // Gets ID of uniform called "scale"
-    GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
+    GLuint unifScaleID = glGetUniformLocation(shaderProgram.ID, "scale");
+
+    time_t timer;
+    GLuint unifTimeID = glGetUniformLocation(shaderProgram.ID, "time");
+    GLuint unifDeltaTimeID = glGetUniformLocation(shaderProgram.ID, "deltaTime");
 
     // Texture
     Texture texture("brainrot.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
@@ -118,8 +125,15 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);            // use state
         // Tell OpenGL which shader program we want to use
         shaderProgram.Activate();
-        // Set value of uniform float with ID uniID
-        glUniform1f(uniID, 0.0f);
+        // Set value of uniform float with ID unifScaleID
+        glUniform1f(unifScaleID, 0.0f);
+        glUniform1f(unifTimeID, (GLfloat)(myClock.getTimeSinceInit()));
+        glUniform1f(unifDeltaTimeID, (GLfloat)(myClock.deltaTime()));
+
+        std::cout << "Current time: " << myClock.getTimeSinceInit() << "\nTime as GLfloat: " << (GLfloat)(myClock.getTimeSinceInit()) << std::endl
+        << "Delta time: " << myClock.deltaTime() << std::endl;
+
+        // glUniform1f()
         texture.Bind();
         // Bind the VAO so OpenGL knows to use it
         VAO1.Bind();
@@ -130,6 +144,8 @@ int main()
         // See double buffer (front and back)
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        myClock.update();
     }
 
     // deallocate all resources once they have outlived their purpose
