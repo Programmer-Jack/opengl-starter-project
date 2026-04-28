@@ -99,9 +99,10 @@ int main()
     VBO1.Unbind();
     EBO1.Unbind();
 
-    // Gets ID of uniform called "scale"
-    GLuint unifScaleID = glGetUniformLocation(shaderProgram.ID, "scale");
+    // Get id of uniform transform
+    GLuint unifTransID = glGetUniformLocation(shaderProgram.ID, "transform");
 
+    // Time handling
     time_t timer;
     GLuint unifTimeID = glGetUniformLocation(shaderProgram.ID, "time");
     GLuint unifDeltaTimeID = glGetUniformLocation(shaderProgram.ID, "deltaTime");
@@ -112,9 +113,6 @@ int main()
     texture.texUnit(shaderProgram, "tex0", 0);
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
 
     // Render loop
     while (!glfwWindowShouldClose(window))
@@ -130,15 +128,22 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);            // use state
         // Tell OpenGL which shader program we want to use
         shaderProgram.Activate();
-        // Set value of uniform float with ID unifScaleID
-        glUniform1f(unifScaleID, 0.0f);
+        
+
+        // Identity matrix-4
+        glm::mat4 trans = glm::mat4(1.0f);
+        // Translation happens second mathematically
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        // Rotation happens second mathematically
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        glUniformMatrix4fv(unifTransID, 1, GL_FALSE, glm::value_ptr(trans));
         glUniform1f(unifTimeID, (GLfloat)(myClock.getTimeSinceInit()));
         glUniform1f(unifDeltaTimeID, (GLfloat)(myClock.deltaTime()));
 
         std::cout << "Current time: " << myClock.getTimeSinceInit() << "\nTime as GLfloat: " << (GLfloat)(myClock.getTimeSinceInit()) << std::endl
         << "Delta time: " << myClock.deltaTime() << std::endl;
 
-        // glUniform1f()
         texture.Bind();
         // Bind the VAO so OpenGL knows to use it
         VAO1.Bind();
