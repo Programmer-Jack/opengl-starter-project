@@ -4,6 +4,9 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include "stb/stb_image.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "shaderClass.h"
 #include "VAO.h"
@@ -35,7 +38,6 @@ void processInput(GLFWwindow* window);
 // settings
 const unsigned int SCREEN_WIDTH = 600;
 const unsigned int SCREEN_HEIGHT = 600;
-
 
 int main()
 {
@@ -110,6 +112,9 @@ int main()
     texture.texUnit(shaderProgram, "tex0", 0);
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
 
     // Render loop
     while (!glfwWindowShouldClose(window))
